@@ -9,7 +9,7 @@ echo "Done"
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 TANGGAL=$(date +"%F-%S")
 START=$(date +"%s")
-GCC_VERSION=$(gcc/bin/aarch64-elf-gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+GCC_VERSION=$(gcc-64/bin/aarch64-linux-android-gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export CONFIG_PATH=$PWD/arch/arm64/configs/rolex_defconfig
 PATH="${PWD}/gcc-64/bin:${PWD}/gcc-32/bin:$PATH"
 export ARCH=arm64
@@ -50,11 +50,11 @@ function finerr() {
 }
 # Compile plox
 function compile() {
-   make O=out ARCH=arm64 raphael_defconfig
+   make O=out ARCH=arm64 rolex_defconfig
        make -j$(nproc --all) O=out \
-                             ARCH=arm64 \
-			     CROSS_COMPILE=aarch64-elf- \
-			     CROSS_COMPILE_ARM32=arm-eabi-
+                      ARCH=arm64 \
+                      CROSS_COMPILE="$(pwd)/gcc-64/bin/aarch64-linux-android-" \
+                      CROSS_COMPILE_ARM32="$(pwd)/gcc-32/bin/arm-linux-androideabi-"
 
 if [ `ls "$IMAGE" 2>/dev/null | wc -l` != "0" ]
 then
